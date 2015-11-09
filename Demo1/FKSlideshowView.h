@@ -1,5 +1,5 @@
 //
-//  TMSlideshowView.h
+//  FKSlideshowView.h
 //  Demo1
 //
 //  Created by Kazuya Ueoka on 2015/11/09.
@@ -10,16 +10,15 @@
 
 typedef enum
 {
-    TMSlideshowStatusPlaying,
-    TMSlideshowStatusPause
-} TMSlideshowStatus;
+    FKSlideshowStatusPlaying,
+    FKSlideshowStatusPause
+} FKSlideshowStatus;
 
-#define TMSlideshowDefaultDuration 7.0f
-#define TMSlideshowDefaultFade     1.0f
+#define FKSlideshowDefaultDuration 0.2f
+#define FKSlideshowDefaultFade     0.0f
 
-@interface TMSlideshowView : UIView
+@interface FKSlideshowView : UIView
 {
-    NSArray *_images;
     UIImage *activeImage;
     UIImageView *firstImageView;
     UIImageView *secondImageView;
@@ -29,7 +28,7 @@ typedef enum
 }
 
 @property (nonatomic) NSArray *images;
-@property (nonatomic, assign) TMSlideshowStatus status;
+@property (nonatomic, assign) FKSlideshowStatus status;
 @property (nonatomic, assign) CGFloat duration;
 @property (nonatomic, assign) CGFloat fade;
 

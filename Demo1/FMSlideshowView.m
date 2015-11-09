@@ -1,14 +1,14 @@
 //
-//  TMSlideshowView.m
+//  FKSlideshowView.m
 //  Demo1
 //
 //  Created by Kazuya Ueoka on 2015/11/09.
 //  Copyright © 2015年 TImers Inc. All rights reserved.
 //
 
-#import "TMSlideshowView.h"
+#import "FKSlideshowView.h"
 
-@implementation TMSlideshowView
+@implementation FKSlideshowView
 
 /*
 // Only override drawRect: if you perform custom drawing.
@@ -18,15 +18,6 @@
 }
 */
 
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        [self _initialize];
-        self.images = @[];
-    }
-    return self;
-}
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -63,7 +54,7 @@
         return;
     }
     
-    self.status = TMSlideshowStatusPause;
+    self.status = FKSlideshowStatusPause;
     initialized = YES;
     
     self.layer.masksToBounds = YES;
@@ -80,8 +71,8 @@
     [self addSubview:firstImageView];
     [self addSubview:secondImageView];
     
-    self.duration = TMSlideshowDefaultDuration;
-    self.fade     = TMSlideshowDefaultFade;
+    self.duration = FKSlideshowDefaultDuration;
+    self.fade     = FKSlideshowDefaultFade;
 
     [self play];
 }
@@ -114,16 +105,11 @@
     }];
 }
 
-- (NSArray *)getImages
-{
-    return _images;
-}
-
 - (void)setImages:(NSArray *)images
 {
     _images = images;
     
-    if (0 < self.images.count)
+    if (0 < images.count)
     {
         if (nil == activeImage)
         {
@@ -156,7 +142,7 @@
 
 - (BOOL)playing
 {
-    return self.status == TMSlideshowStatusPlaying;
+    return self.status == FKSlideshowStatusPlaying;
 }
 
 - (void)play
@@ -165,8 +151,13 @@
     {
         return;
     }
+
+    if (timer.isValid)
+    {
+        [timer invalidate];
+    }
     
-    self.status = TMSlideshowStatusPlaying;
+    self.status = FKSlideshowStatusPlaying;
     timer = [NSTimer scheduledTimerWithTimeInterval:self.duration target:self selector:@selector(_fire) userInfo:nil repeats:YES];
 }
 
@@ -181,11 +172,12 @@
     {
         [timer invalidate];
     }
-    self.status = TMSlideshowStatusPause;
+    self.status = FKSlideshowStatusPause;
 }
 
 - (void)dealloc
 {
+    if (self.playing) [self pause];
     firstImageView.image = nil;
     secondImageView.image = nil;
     [firstImageView removeFromSuperview];

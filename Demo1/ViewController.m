@@ -26,7 +26,7 @@
         filename = nil;
     }
     
-    self.slideshowView = [[TMSlideshowView alloc] initWithImages:images];
+    self.slideshowView = [[FKSlideshowView alloc] initWithImages:images];
     [self.view addSubview:self.slideshowView];
     
     self.btn = [UIButton buttonWithType:UIButtonTypeRoundedRect];
