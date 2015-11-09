@@ -7,9 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TMSlideshowView.h"
 
 @interface ViewController : UIViewController
 
+@property (nonatomic) TMSlideshowView *slideshowView;
+@property (nonatomic) UIButton *btn;
+
+- (void)tappedBtn:(UIButton *)sender;
 
 @end
 
