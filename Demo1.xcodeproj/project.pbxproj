@@ -23,6 +23,8 @@
 		4F70BFE11BF05F7D00F422EE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4F70BFDF1BF05F7D00F422EE /* LaunchScreen.storyboard */; };
 		4F70BFEC1BF05F7D00F422EE /* Demo1Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F70BFEB1BF05F7D00F422EE /* Demo1Tests.m */; };
 		4F70BFF71BF05F7D00F422EE /* Demo1UITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4F70BFF61BF05F7D00F422EE /* Demo1UITests.m */; };
+		4FCE4D2A1BF18BDA00A45F77 /* FKSlideshowViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4FCE4D291BF18BDA00A45F77 /* FKSlideshowViewTests.m */; };
+		4FCE4D2C1BF1989600A45F77 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4FCE4D2B1BF1989600A45F77 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,6 +70,8 @@
 		4F70BFF21BF05F7D00F422EE /* Demo1UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Demo1UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4F70BFF61BF05F7D00F422EE /* Demo1UITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Demo1UITests.m; sourceTree = "<group>"; };
 		4F70BFF81BF05F7D00F422EE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4FCE4D291BF18BDA00A45F77 /* FKSlideshowViewTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FKSlideshowViewTests.m; sourceTree = "<group>"; };
+		4FCE4D2B1BF1989600A45F77 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +79,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4FCE4D2C1BF1989600A45F77 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,6 +124,7 @@
 		4F70BFC21BF05F7D00F422EE = {
 			isa = PBXGroup;
 			children = (
+				4FCE4D2B1BF1989600A45F77 /* QuartzCore.framework */,
 				4F70BFCD1BF05F7D00F422EE /* Demo1 */,
 				4F70BFEA1BF05F7D00F422EE /* Demo1Tests */,
 				4F70BFF51BF05F7D00F422EE /* Demo1UITests */,
@@ -169,6 +175,7 @@
 			children = (
 				4F70BFEB1BF05F7D00F422EE /* Demo1Tests.m */,
 				4F70BFED1BF05F7D00F422EE /* Info.plist */,
+				4FCE4D291BF18BDA00A45F77 /* FKSlideshowViewTests.m */,
 			);
 			path = Demo1Tests;
 			sourceTree = "<group>";
@@ -330,6 +337,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4FCE4D2A1BF18BDA00A45F77 /* FKSlideshowViewTests.m in Sources */,
 				4F70BFEC1BF05F7D00F422EE /* Demo1Tests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -413,7 +421,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -451,7 +459,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -464,6 +472,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = Demo1/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.timers-inc.Demo1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -475,6 +484,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = Demo1/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.timers-inc.Demo1";
 				PRODUCT_NAME = "$(TARGET_NAME)";

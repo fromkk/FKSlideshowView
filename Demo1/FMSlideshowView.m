@@ -7,6 +7,7 @@
 //
 
 #import "FKSlideshowView.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation FKSlideshowView
 
@@ -18,6 +19,17 @@
 }
 */
 
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    if (self)
+    {
+        [self _initialize];
+        self.images = @[];
+    }
+    
+    return self;
+}
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -43,6 +55,8 @@
 {
     [super layoutSubviews];
     
+    layouted = YES;
+    
     firstImageView.frame = self.bounds;
     secondImageView.frame = self.bounds;
 }
@@ -56,6 +70,7 @@
     
     self.status = FKSlideshowStatusPause;
     initialized = YES;
+    layouted = NO;
     
     self.layer.masksToBounds = YES;
     self.clipsToBounds = YES;
@@ -68,40 +83,63 @@
     secondImageView = [[UIImageView alloc] init];
     secondImageView.contentMode = UIViewContentModeScaleAspectFill;
     secondImageView.alpha = 0.0f;
+    
+    activeImageView = firstImageView;
+    
+    //firstImageView.layer.borderColor = [UIColor redColor].CGColor;
+    //firstImageView.layer.borderWidth = 5.0;
+    
+    //secondImageView.layer.borderColor = [UIColor blueColor].CGColor;
+    //secondImageView.layer.borderWidth = 5.0;
+    
     [self addSubview:firstImageView];
     [self addSubview:secondImageView];
     
     self.duration = FKSlideshowDefaultDuration;
     self.fade     = FKSlideshowDefaultFade;
-
-    [self play];
+    self.type     = FKSlideshowTypeCrossfade;
 }
 
 - (void)_fire
 {
+    loopCount++;
+    
+    int index = loopCount % self.images.count;
+    activeImage = [self.images objectAtIndex:index];
+    
+    if ( 0 == loopCount % 2 )
+    {
+        activeImageView = firstImageView;
+    } else
+    {
+        activeImageView = secondImageView;
+    }
+    activeImageView.image = activeImage;
+    
+    [self _crossfade];
+}
+
+- (void)_crossfade
+{
     __weak typeof(self) _wself = self;
+    
     [UIView animateWithDuration:self.fade animations:^{
         if (!_wself)
         {
             return;
         }
         
-        int index = loopCount % _wself.images.count;
-        activeImage = [_wself.images objectAtIndex:index];
-        
         if ( 0 == loopCount % 2 )
         {
-            secondImageView.image = activeImage;
-            firstImageView.alpha = 0.0f;
-            secondImageView.alpha = 1.0;
-        } else
-        {
-            firstImageView.image = activeImage;
             firstImageView.alpha = 1.0f;
             secondImageView.alpha = 0.0f;
+        } else
+        {
+            firstImageView.alpha = 0.0f;
+            secondImageView.alpha = 1.0;
         }
     } completion:^(BOOL finished) {
-        loopCount++;
+        timer = [NSTimer scheduledTimerWithTimeInterval:_wself.duration target:_wself selector:@selector(_fire) userInfo:nil repeats:NO];
     }];
 }
 
@@ -111,32 +149,9 @@
     
     if (0 < images.count)
     {
-        if (nil == activeImage)
-        {
-            [self _fire];
-        }
-    }
-}
-
-- (void)setDuration:(CGFloat)duration
-{
-    _duration = duration;
-    
-    if (self.playing)
-    {
-        [self pause];
-        [self play];
-    }
-}
-
-- (void)setFade:(CGFloat)fade
-{
-    _fade = fade;
-    
-    if (self.playing)
-    {
-        [self pause];
-        [self play];
+        int index = loopCount % images.count;
+        activeImage = [images objectAtIndex:index];
+        activeImageView.image = activeImage;
     }
 }
 
@@ -158,7 +173,7 @@
     }
     
     self.status = FKSlideshowStatusPlaying;
-    timer = [NSTimer scheduledTimerWithTimeInterval:self.duration target:self selector:@selector(_fire) userInfo:nil repeats:YES];
+    timer = [NSTimer scheduledTimerWithTimeInterval:self.duration target:self selector:@selector(_fire) userInfo:nil repeats:NO];
 }
 
 - (void)pause
@@ -172,6 +187,10 @@
     {
         [timer invalidate];
     }
+    
+    [firstImageView.layer removeAllAnimations];
+    [secondImageView.layer removeAllAnimations];
+    
     self.status = FKSlideshowStatusPause;
 }
 
@@ -185,6 +204,7 @@
     firstImageView = nil;
     secondImageView = nil;
     activeImage = nil;
+    activeImageView = nil;
     self.images = nil;
 }
 

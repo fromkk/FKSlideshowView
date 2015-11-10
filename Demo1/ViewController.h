@@ -11,7 +11,7 @@
 
 @interface ViewController : UIViewController
 
-@property (nonatomic) FKSlideshowView *slideshowView;
+@property (nonatomic) IBOutlet FKSlideshowView *slideshowView;
 @property (nonatomic) UIButton *btn;
 
 - (void)tappedBtn:(UIButton *)sender;
