@@ -57,8 +57,22 @@
     
     layouted = YES;
     
-    firstImageView.frame = self.bounds;
-    secondImageView.frame = self.bounds;
+    if (self.type == FKSlideshowTypeCrossfade)
+    {
+        firstImageView.frame = self.bounds;
+        secondImageView.frame = self.bounds;
+    } else
+    {
+        [self _imageViewFrameAdjust:firstImageView];
+        [self _imageViewFrameAdjust:secondImageView];
+    }
+}
+
+- (void)setType:(FKSlideshowType)type
+{
+    _type = type;
+    
+    [self setNeedsLayout];
 }
 
 - (void)_initialize
@@ -84,38 +98,33 @@
     secondImageView.contentMode = UIViewContentModeScaleAspectFill;
     secondImageView.alpha = 0.0f;
     
-    activeImageView = firstImageView;
-    
-    //firstImageView.layer.borderColor = [UIColor redColor].CGColor;
-    //firstImageView.layer.borderWidth = 5.0;
-    
-    //secondImageView.layer.borderColor = [UIColor blueColor].CGColor;
-    //secondImageView.layer.borderWidth = 5.0;
+//    firstImageView.layer.borderColor = [UIColor redColor].CGColor;
+//    firstImageView.layer.borderWidth = 5.0;
+//    
+//    secondImageView.layer.borderColor = [UIColor blueColor].CGColor;
+//    secondImageView.layer.borderWidth = 5.0;
     
     [self addSubview:firstImageView];
     [self addSubview:secondImageView];
     
     self.duration = FKSlideshowDefaultDuration;
     self.fade     = FKSlideshowDefaultFade;
-    self.type     = FKSlideshowTypeCrossfade;
+    self.type     = FKSlideshowDefaultType;
 }
 
 - (void)_fire
 {
     loopCount++;
     
+    if (timer.isValid)
+    {
+        [timer invalidate];
+    }
+    
     int index = loopCount % self.images.count;
     activeImage = [self.images objectAtIndex:index];
     
-    if ( 0 == loopCount % 2 )
-    {
-        activeImageView = firstImageView;
-    } else
-    {
-        activeImageView = secondImageView;
-    }
-    activeImageView.image = activeImage;
-    
+    [self _setActiveImage:activeImage];
     [self _crossfade];
 }
 
@@ -123,6 +132,9 @@
 {
     __weak typeof(self) _wself = self;
     
+    [self _beforeCrossFade];
+    
+    [NSTimer scheduledTimerWithTimeInterval:self.fade / 2.0f target:self selector:@selector(_effect) userInfo:nil repeats:NO];
     [UIView animateWithDuration:self.fade animations:^{
         if (!_wself)
         {
@@ -139,8 +151,57 @@
             secondImageView.alpha = 1.0;
         }
     } completion:^(BOOL finished) {
+        if (!_wself)
+        {
+            return;
+        }
+        
+        [_wself _afterCrossFade];
         timer = [NSTimer scheduledTimerWithTimeInterval:_wself.duration target:_wself selector:@selector(_fire) userInfo:nil repeats:NO];
     }];
+}
+
+- (void)_beforeCrossFade
+{
+    switch (self.type) {
+        case FKSlideshowTypeSlideRight:
+            if (0 == loopCount % 2)
+            {
+                [self _toLeft:firstImageView];
+            } else
+            {
+                [self _toLeft:secondImageView];
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)_afterCrossFade
+{
+    switch (self.type) {
+        case FKSlideshowTypeSlideLeft:
+            if (0 == loopCount % 2)
+            {
+                [self _toRight:secondImageView];
+            } else
+            {
+                [self _toRight:firstImageView];
+            }
+            break;
+        case FKSlideshowTypeSlideRight:
+            if (0 == loopCount % 2)
+            {
+                [self _toLeft:secondImageView];
+            } else
+            {
+                [self _toLeft:firstImageView];
+            }
+            break;
+        default:
+            break;
+    }
 }
 
 - (void)setImages:(NSArray *)images
@@ -151,7 +212,20 @@
     {
         int index = loopCount % images.count;
         activeImage = [images objectAtIndex:index];
-        activeImageView.image = activeImage;
+        [self _setActiveImage:activeImage];
+    }
+}
+
+- (void)_setActiveImage:(UIImage *)image
+{
+    if ( 0 == loopCount % 2 )
+    {
+        firstImageView.image = activeImage;
+        [self _imageViewFrameAdjust:firstImageView];
+    } else
+    {
+        secondImageView.image = activeImage;
+        [self _imageViewFrameAdjust:secondImageView];
     }
 }
 
@@ -194,6 +268,91 @@
     self.status = FKSlideshowStatusPause;
 }
 
+- (void)_effect
+{
+    switch (self.type) {
+        case FKSlideshowTypeSlideLeft:
+            [self _effectSlideLeft];
+            break;
+        case FKSlideshowTypeSlideRight:
+            [self _effectSlightRight];
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)_effectSlideLeft
+{
+    NSLog(@"%s", __FUNCTION__);
+    
+    [UIView animateWithDuration:self.duration animations:^{
+        if (0 == loopCount % 2)
+        {
+            [self _toLeft:firstImageView];
+        } else
+        {
+            [self _toLeft:secondImageView];
+        }
+    }];
+}
+
+- (void)_effectSlightRight
+{
+    NSLog(@"%s", __FUNCTION__);
+    
+    [UIView animateWithDuration:self.duration animations:^{
+        if (0 == loopCount % 2)
+        {
+            [self _toRight:firstImageView];
+        } else
+        {
+            [self _toRight:secondImageView];
+        }
+    }];
+}
+
+- (void)_imageViewFrameAdjust:(UIImageView *)imageView
+{
+    if (nil == imageView.image || !layouted)
+    {
+        return;
+    }
+    
+    CGFloat width, height, aspect;
+    CGRect frame = imageView.frame;
+    if ( imageView.image.size.width > imageView.image.size.height )
+    {
+        height = self.frame.size.height;
+        aspect = height / imageView.image.size.height;
+        width  = imageView.image.size.width * aspect;
+    } else
+    {
+        width = self.frame.size.width;
+        aspect = width / imageView.image.size.width;
+        height = imageView.image.size.height * aspect;
+    }
+    frame.size.width = width;
+    frame.size.height = height;
+    frame.origin.y = -(height - self.frame.size.height) / 2.0;
+    imageView.frame = frame;
+}
+
+- (void)_toLeft:(UIImageView *)imageView
+{
+    CGRect frame = imageView.frame;
+    CGFloat x = self.frame.size.width - imageView.frame.size.width;
+    frame.origin.x = x;
+    imageView.frame = frame;
+}
+
+- (void)_toRight:(UIImageView *)imageView
+{
+    CGRect frame = imageView.frame;
+    frame.origin.x = 0.0;
+    imageView.frame = frame;
+}
+
 - (void)dealloc
 {
     if (self.playing) [self pause];
@@ -204,7 +363,6 @@
     firstImageView = nil;
     secondImageView = nil;
     activeImage = nil;
-    activeImageView = nil;
     self.images = nil;
 }
 

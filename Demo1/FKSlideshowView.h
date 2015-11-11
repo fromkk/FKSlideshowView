@@ -28,7 +28,6 @@ typedef enum
 @interface FKSlideshowView : UIView
 {
     UIImage *activeImage;
-    UIImageView *activeImageView;
     UIImageView *firstImageView;
     UIImageView *secondImageView;
     int loopCount;
