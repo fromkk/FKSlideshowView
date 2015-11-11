@@ -16,14 +16,16 @@ typedef enum
 
 typedef enum
 {
-    FKSlideshowTypeCrossfade,
+    FKSlideshowTypeCrossfade = 0,
     FKSlideshowTypeSlideLeft,
-    FKSlideshowTypeSlideRight
+    FKSlideshowTypeSlideRight,
+    FKSlideshowTypeCount
 } FKSlideshowType;
 
 #define FKSlideshowDefaultDuration 3.0f
 #define FKSlideshowDefaultFade     1.0f
 #define FKSlideshowDefaultType     FKSlideshowTypeCrossfade
+#define FKSlideshowDefaultRandom   NO
 
 @interface FKSlideshowView : UIView
 {
@@ -41,6 +43,7 @@ typedef enum
 @property (nonatomic, assign) FKSlideshowType type;
 @property (nonatomic, assign) CGFloat duration;
 @property (nonatomic, assign) CGFloat fade;
+@property (nonatomic, assign) BOOL random;
 
 /**
  * initialize with images

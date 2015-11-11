@@ -51,23 +51,6 @@
     return self;
 }
 
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    
-    layouted = YES;
-    
-    if (self.type == FKSlideshowTypeCrossfade)
-    {
-        firstImageView.frame = self.bounds;
-        secondImageView.frame = self.bounds;
-    } else
-    {
-        [self _imageViewFrameAdjust:firstImageView];
-        [self _imageViewFrameAdjust:secondImageView];
-    }
-}
-
 - (void)setType:(FKSlideshowType)type
 {
     _type = type;
@@ -110,6 +93,19 @@
     self.duration = FKSlideshowDefaultDuration;
     self.fade     = FKSlideshowDefaultFade;
     self.type     = FKSlideshowDefaultType;
+    self.random   = NO;
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    if (!layouted)
+    {
+        firstImageView.frame = self.bounds;
+        secondImageView.frame = self.bounds;
+        layouted = YES;
+    }
 }
 
 - (void)_fire
@@ -123,6 +119,11 @@
     
     int index = loopCount % self.images.count;
     activeImage = [self.images objectAtIndex:index];
+    
+    if (self.random)
+    {
+        self.type = random() % FKSlideshowTypeCount;
+    }
     
     [self _setActiveImage:activeImage];
     [self _crossfade];
@@ -164,6 +165,15 @@
 - (void)_beforeCrossFade
 {
     switch (self.type) {
+        case FKSlideshowTypeSlideLeft:
+            if (0 == loopCount % 2)
+            {
+                [self _toRight:firstImageView];
+            } else
+            {
+                [self _toRight:secondImageView];
+            }
+            break;
         case FKSlideshowTypeSlideRight:
             if (0 == loopCount % 2)
             {
@@ -284,8 +294,6 @@
 
 - (void)_effectSlideLeft
 {
-    NSLog(@"%s", __FUNCTION__);
-    
     [UIView animateWithDuration:self.duration animations:^{
         if (0 == loopCount % 2)
         {
@@ -299,8 +307,6 @@
 
 - (void)_effectSlightRight
 {
-    NSLog(@"%s", __FUNCTION__);
-    
     [UIView animateWithDuration:self.duration animations:^{
         if (0 == loopCount % 2)
         {
@@ -350,6 +356,14 @@
 {
     CGRect frame = imageView.frame;
     frame.origin.x = 0.0;
+    imageView.frame = frame;
+}
+
+- (void)_toCenter:(UIImageView *)imageView
+{
+    CGRect frame = imageView.frame;
+    CGFloat x = (self.frame.size.width - imageView.frame.size.width) / 2.0;
+    frame.origin.x = x;
     imageView.frame = frame;
 }
 
