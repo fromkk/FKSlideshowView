@@ -92,6 +92,7 @@
     
     self.duration = FKSlideshowDefaultDuration;
     self.fade     = FKSlideshowDefaultFade;
+    self.zoom     = FKSlideshowDefaultZoom;
     self.type     = FKSlideshowDefaultType;
     self.random   = NO;
 }
@@ -183,7 +184,32 @@
                 [self _toLeft:secondImageView];
             }
             break;
+        case FKSlideshowTypeZoomIn:
+            if (0 == loopCount % 2)
+            {
+                [self _zoomOut:firstImageView];
+            } else
+            {
+                [self _zoomOut:secondImageView];
+            }
+            break;
+        case FKSlideshowTypeZoomOut:
+            if (0 == loopCount % 2)
+            {
+                [self _zoomIn:firstImageView];
+            } else
+            {
+                [self _zoomIn:secondImageView];
+            }
+            break;
         default:
+            if (0 == loopCount % 2)
+            {
+                firstImageView.frame = self.bounds;
+            } else
+            {
+                secondImageView.frame = self.bounds;
+            }
             break;
     }
 }
@@ -239,6 +265,17 @@
     }
 }
 
+- (void)setZoom:(CGFloat)zoom
+{
+    if (zoom <= 1.0f)
+    {
+        _zoom = 1.0f;
+        return;
+    }
+    
+    _zoom = zoom;
+}
+
 - (BOOL)playing
 {
     return self.status == FKSlideshowStatusPlaying;
@@ -287,6 +324,12 @@
         case FKSlideshowTypeSlideRight:
             [self _effectSlightRight];
             break;
+        case FKSlideshowTypeZoomIn:
+            [self _effectZoomIn];
+            break;
+        case FKSlideshowTypeZoomOut:
+            [self _effectZoomOut];
+            break;
         default:
             break;
     }
@@ -314,6 +357,32 @@
         } else
         {
             [self _toRight:secondImageView];
+        }
+    }];
+}
+
+- (void)_effectZoomIn
+{
+    [UIView animateWithDuration:self.duration animations:^{
+        if (0 == loopCount % 2)
+        {
+            [self _zoomIn:firstImageView];
+        } else
+        {
+            [self _zoomIn:secondImageView];
+        }
+    }];
+}
+
+- (void)_effectZoomOut
+{
+    [UIView animateWithDuration:self.duration animations:^{
+        if (0 == loopCount % 2)
+        {
+            [self _zoomOut:firstImageView];
+        } else
+        {
+            [self _zoomOut:secondImageView];
         }
     }];
 }
@@ -365,6 +434,23 @@
     CGFloat x = (self.frame.size.width - imageView.frame.size.width) / 2.0;
     frame.origin.x = x;
     imageView.frame = frame;
+}
+
+- (void)_zoomIn:(UIImageView *)imageView
+{
+    CGFloat width, height, x, y;
+    CGRect frame = imageView.frame;
+    width = frame.size.width * self.zoom;
+    height = frame.size.height * self.zoom;
+    x = (frame.size.width - width) / 2.0f;
+    y = (frame.size.height - height) / 2.0f;
+    frame = CGRectMake(x, y, width, height);
+    imageView.frame = frame;
+}
+
+- (void)_zoomOut:(UIImageView *)imageView
+{
+    imageView.frame = self.bounds;
 }
 
 - (void)dealloc
